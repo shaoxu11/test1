@@ -29,7 +29,7 @@ public interface UserDao {
 	//查询3级菜单
 	public List<Jurisdiction> Assginbyid3();
         //是已收到吧
-//参数
+//参数2
 	
 
 
