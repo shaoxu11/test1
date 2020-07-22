@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sx.dao.UserDao">
+	<resultMap type="User" id="userMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+		<result property="gender" column="gender"/>
+		<result property="address" column="address"/>
+		<result property="password" column="password"/>
+		<collection property="jurisdiction" ofType="Jurisdiction">
+		<id property="id" column="j_id"/>
+		<result property="jurisdiction_name" column="jurisdiction_name"/>
+		<result property="jurisdiction_type" column="jurisdiction_type"/>
+		<result property="jurisdiction_parent" column="jurisdiction_parent"/>
+		<result property="jurisdiction_uri" column="jurisdiction_uri"/>
+		<result property="jurisdiction_describe" column="jurisdiction_describe"/>
+		</collection>
+	</resultMap>
+	<!-- 登录 -->
+	<select id="loginUser" resultType="User">
+		select * from User where name=#{name} and password=#{password}
+	</select>
+
+	<!-- 查询所有信息 -->
+	<select id="allUser" resultType="User">
+		select * from User
+	</select>
+	
+	<!-- 显示登录人所拥有的菜单权限 -->
+	<select id="byidMenu" parameterType="Integer" resultType="Jurisdiction">
+		<!-- SELECT u.*,j.*,j.id as j_id FROM  `user` u, jurisdiction j,user_jurisdiction uj WHERE u.id = uj.user_id AND j.id=uj.jurisdiction_id AND u.`id`=#{id} -->
+		SELECT j.* FROM jurisdiction j,user_jurisdiction uj WHERE j.id=uj.jurisdiction_id AND uj.`user_id`=#{id}
+	</select>
+	<!-- 显示登录人的按钮 -->
+	<select id="byidButton" parameterType="Integer" resultType="Jurisdiction">
+		SELECT j.*FROM  jurisdiction j,user_jurisdiction uj WHERE j.id=uj.jurisdiction_id AND uj.user_id=#{user_id} AND j.jurisdiction_parent=#{jurisdiction_parent}
+	</select>
+	<!-- 查询所有菜单 -->
+	<select id="Assgin" resultType="Jurisdiction">
+		select * from jurisdiction
+	</select>
+	<!-- 查询1级菜单 -->
+	<select id="Assginbyid1" resultType="Jurisdiction">
+		select * from jurisdiction where jurisdiction_type =1;
+	</select>
+	<!-- 查询2级菜单 -->
+	<select id="Assginbyid2" resultType="Jurisdiction">
+		select * from jurisdiction where jurisdiction_type =2;
+	</select>
+	<!-- 查询3级菜单 -->
+	<select id="Assginbyid3" resultType="Jurisdiction">
+		select * from jurisdiction where jurisdiction_type =3;
+	</select>
+	<!-- 删除用户的所有权限 -->
+	<delete id="delRole" parameterType="Integer">
+	delete from user_jurisdiction where user_id=#{id}
+	</delete>
+	<!-- 添加用户权限 -->
+	<insert id="addRole">
+		INSERT user_jurisdiction (user_id,jurisdiction_id) VALUES(#{id},#{ids});
+	</insert>
+	
+</mapper>
